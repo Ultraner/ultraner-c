@@ -71,8 +71,10 @@ ultraner_response ultraner_request(ultraner_client *c, const char *method,
     char *url = (char *)malloc(url_len);
     snprintf(url, url_len, "%s%s", c->base_url, path);
 
+    /* Ultraner API keys authenticate via X-API-Key (Authorization: Bearer is
+     * reserved for user JWTs and would be rejected for a uk_ key). */
     char auth[512];
-    snprintf(auth, sizeof(auth), "Authorization: Bearer %s", c->api_key);
+    snprintf(auth, sizeof(auth), "X-API-Key: %s", c->api_key);
 
     struct curl_slist *headers = NULL;
     headers = curl_slist_append(headers, "Content-Type: application/json");
@@ -146,4 +148,14 @@ ultraner_response ultraner_release_escrow(ultraner_client *c, const char *escrow
     char path[256];
     snprintf(path, sizeof(path), "/v1/escrow/%s/release", escrow_code ? escrow_code : "");
     return ultraner_request(c, "POST", path, NULL);
+}
+
+ultraner_response ultraner_create_checkout_session(ultraner_client *c, const char *json_body) {
+    return ultraner_request(c, "POST", "/v0/checkout/sessions", json_body);
+}
+
+ultraner_response ultraner_retrieve_checkout_session(ultraner_client *c, const char *token) {
+    char path[256];
+    snprintf(path, sizeof(path), "/v0/pay/resolve/%s", token ? token : "");
+    return ultraner_request(c, "GET", path, NULL);
 }

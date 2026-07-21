@@ -43,6 +43,11 @@ ultraner_response ultraner_transactions(ultraner_client *c, int page, int limit)
 ultraner_response ultraner_create_escrow(ultraner_client *c, const char *json_body);
 ultraner_response ultraner_release_escrow(ultraner_client *c, const char *escrow_code);
 
+/* Checkout sessions: mint a one-time, expiring checkout token (Stripe
+ * checkout.sessions.create parity). json_body is a raw JSON string. */
+ultraner_response ultraner_create_checkout_session(ultraner_client *c, const char *json_body);
+ultraner_response ultraner_retrieve_checkout_session(ultraner_client *c, const char *token);
+
 #ifdef __cplusplus
 }
 #endif
